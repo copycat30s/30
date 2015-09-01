@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.yahoo.apps.thirty.activities.PostsActivity">
+    <item android:id="@+id/action_post"
+        android:title="@string/action_post"
+        android:icon="@drawable/ic_compose"
+        android:orderInCategory="2"
+        app:showAsAction="ifRoom" />
+</menu>

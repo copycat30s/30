@@ -17,8 +17,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name"
-        android:id="@+id/tvName"
+        android:text="Title"
+        android:id="@+id/tvTitle"
         android:textStyle="bold"
         android:layout_marginRight="5dp"
         android:layout_marginEnd="5dp"
@@ -29,9 +29,20 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Author"
+        android:id="@+id/tvAuthor"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/tvTitle"
+        android:layout_toEndOf="@+id/tvTitle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Body"
         android:id="@+id/tvBody"
-        android:layout_below="@+id/tvName"
+        android:layout_below="@+id/tvTitle"
         android:layout_toRightOf="@+id/ivProfile"
         android:layout_toEndOf="@+id/ivProfile" />
 
@@ -41,16 +52,8 @@
         android:layout_height="wrap_content"
         android:gravity="end|center_vertical"
         android:textColor="@color/light_gray"
-        android:layout_alignBottom="@+id/tvName"
+        android:layout_alignBottom="@+id/tvTitle"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ScreenName"
-        android:id="@+id/tvScreenName"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/tvName"
-        android:layout_toEndOf="@+id/tvName" />
 </RelativeLayout>

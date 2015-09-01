@@ -1,7 +1,6 @@
 package com.yahoo.apps.thirty.activities;
 
 import android.app.FragmentManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,28 +11,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.yahoo.apps.thirty.R;
 import com.yahoo.apps.thirty.backbone.TumblrApplication;
 import com.yahoo.apps.thirty.backbone.TumblrClient;
-import com.yahoo.apps.thirty.fragments.HomeTimelineFragment;
-import com.yahoo.apps.thirty.fragments.MentionsTimelineFragment;
-import com.yahoo.apps.thirty.models.Tweet;
-import com.yahoo.apps.thirty.models.User;
-import com.loopj.android.http.JsonHttpResponseHandler;
+import com.yahoo.apps.thirty.fragments.topic.HotTopicsFragment;
+import com.yahoo.apps.thirty.fragments.topic.NewTopicsFragment;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
 
-public class TimelineActivity extends ActionBarActivity implements StatusDialog.StatusDialogListener {
-    private HomeTimelineFragment fHomeTimeline;
-    private MentionsTimelineFragment fMentionsTimeline;
+public class TopicsActivity extends ActionBarActivity implements StatusDialog.StatusDialogListener {
+    private HotTopicsFragment fHotTopics;
+    private NewTopicsFragment fNewTopics;
     private TumblrClient tumblrClient;
-    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timeline);
+        setContentView(R.layout.activity_topics);
         tumblrClient = TumblrApplication.getTumblrClient();
 
         if (savedInstanceState == null) {
@@ -41,21 +37,24 @@ public class TimelineActivity extends ActionBarActivity implements StatusDialog.
             viewPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
             PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
             tabStrip.setViewPager(viewPager);
-            loadUserInfo();
         }
     }
 
-    private void postStatus(String status) {
-        tumblrClient.postStatus(status, new JsonHttpResponseHandler() {
+    private void postStatus(String targetId, String content) {
+        tumblrClient.postStatus(content, targetId, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
-                Tweet tweet = new Tweet(json);
-                fHomeTimeline.add(0, tweet);
+                Log.i("ERROR", json.toString());
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
                 Log.i("ERROR", response.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                Log.i("ERROR", response);
             }
         });
     }
@@ -63,7 +62,7 @@ public class TimelineActivity extends ActionBarActivity implements StatusDialog.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_timeline, menu);
+        getMenuInflater().inflate(R.menu.menu_topics, menu);
         return true;
     }
 
@@ -78,11 +77,11 @@ public class TimelineActivity extends ActionBarActivity implements StatusDialog.
         if (id == R.id.action_post) {
             showPostDialog();
             return true;
-        } else if (id == R.id.action_profile) {
-            Intent i = new Intent(this, ProfileActivity.class);
-            i.putExtra("user", user);
-            startActivity(i);
-            return true;
+//        } else if (id == R.id.action_profile) {
+//            Intent i = new Intent(this, ProfileActivity.class);
+//            i.putExtra("user", user);
+//            startActivity(i);
+//            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -91,36 +90,25 @@ public class TimelineActivity extends ActionBarActivity implements StatusDialog.
     private void showPostDialog() {
         FragmentManager fm = getFragmentManager();
         StatusDialog filterDialog = StatusDialog.newInstance();
+        Bundle bundle = new Bundle();
+        bundle.putString("targetId", "");
+        filterDialog.setArguments(bundle);
         filterDialog.show(fm, "fragment_filter");
     }
 
-    private void loadUserInfo() {
-        tumblrClient.getUserInfo(0, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
-                user = new User(json);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                Log.i("ERROR", response.toString());
-            }
-        });
-    }
-
     @Override
-    public void onFinishStatusDialog(String status) {
-        postStatus(status);
+    public void onFinishStatusDialog(String targetId, String status) {
+        postStatus(targetId, status);
     }
 
     public class TweetsPagerAdapter extends FragmentPagerAdapter {
-        private String tabItems[] = {"Home", "Mentions"};
+        private String tabItems[] = {"Hot", "New"};
 
         public TweetsPagerAdapter(android.support.v4.app.FragmentManager fm) {
             super(fm);
 
-            fHomeTimeline = new HomeTimelineFragment();
-            fMentionsTimeline = new MentionsTimelineFragment();
+            fHotTopics = new HotTopicsFragment();
+            fNewTopics = new NewTopicsFragment();
         }
 
         @Override
@@ -131,9 +119,9 @@ public class TimelineActivity extends ActionBarActivity implements StatusDialog.
         @Override
         public Fragment getItem(int position) {
             if (position == 0) {
-                return fHomeTimeline;
+                return fHotTopics;
             } else if (position == 1) {
-                return fMentionsTimeline;
+                return fNewTopics;
             } else {
                 return null;
             }

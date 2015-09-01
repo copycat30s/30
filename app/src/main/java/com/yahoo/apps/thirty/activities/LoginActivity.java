@@ -29,7 +29,7 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TumblrClient> {
 	// i.e Display application "homepage"
 	@Override
 	public void onLoginSuccess() {
-		 Intent i = new Intent(this, com.yahoo.apps.thirty.activities.TimelineActivity.class);
+		 Intent i = new Intent(this, TopicsActivity.class);
 		 startActivity(i);
 	}
 

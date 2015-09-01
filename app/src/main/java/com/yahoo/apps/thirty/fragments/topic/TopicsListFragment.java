@@ -1,4 +1,4 @@
-package com.yahoo.apps.thirty.fragments;
+package com.yahoo.apps.thirty.fragments.topic;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,52 +11,50 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.yahoo.apps.thirty.R;
-import com.yahoo.apps.thirty.activities.ProfileActivity;
-import com.yahoo.apps.thirty.adapters.TweetsArrayAdapter;
-import com.yahoo.apps.thirty.backbone.TumblrClient;
+import com.yahoo.apps.thirty.activities.PostsActivity;
+import com.yahoo.apps.thirty.adapters.TopicsArrayAdapter;
 import com.yahoo.apps.thirty.backbone.TumblrApplication;
-import com.yahoo.apps.thirty.common.EndlessScrollListener;
-import com.yahoo.apps.thirty.models.Tweet;
-import com.yahoo.apps.thirty.models.User;
+import com.yahoo.apps.thirty.backbone.TumblrClient;
+import com.yahoo.apps.thirty.models.Post;
 
 import java.util.ArrayList;
 
 public abstract class TopicsListFragment extends Fragment {
     protected TumblrClient tumblrClient;
-    protected ArrayList<Tweet> tweets;
-    protected TweetsArrayAdapter tweetsArrayAdapter;
+    protected ArrayList<Post> posts;
+    protected TopicsArrayAdapter topicsArrayAdapter;
     protected SwipeRefreshLayout swipeContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        tweets = new ArrayList<>();
-        tweetsArrayAdapter = new TweetsArrayAdapter(getActivity(), tweets);
+        posts = new ArrayList<>();
+        topicsArrayAdapter = new TopicsArrayAdapter(getActivity(), posts);
         tumblrClient = TumblrApplication.getTumblrClient();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_tweets_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_posts_list, container, false);
 
-        ListView lvTweets = (ListView) v.findViewById(R.id.lvTweets);
-        lvTweets.setAdapter(tweetsArrayAdapter);
+        ListView lvPosts = (ListView) v.findViewById(R.id.lvPosts);
+        lvPosts.setAdapter(topicsArrayAdapter);
         // setup swipe container
         swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                tweets.clear();
-                loadTweetsList();
+                posts.clear();
+                loadTopicsList();
             }
         });
-        lvTweets.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                loadTweetsList();
-            }
-        });
+//        lvTweets.setOnScrollListener(new EndlessScrollListener() {
+//            @Override
+//            public void onLoadMore(int page, int totalItemsCount) {
+//                loadTopicsList();
+//            }
+//        });
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(
                 android.R.color.holo_purple,
@@ -64,28 +62,28 @@ public abstract class TopicsListFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        lvTweets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvPosts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(view.getContext(), ProfileActivity.class);
-                User user = tweets.get(position).getUser();
-                i.putExtra("user", user);
+                Intent i = new Intent(view.getContext(), PostsActivity.class);
+                String topicId = posts.get(position).getUid();
+                i.putExtra("topicId", topicId);
                 startActivity(i);
             }
         });
 
-        loadTweetsList();
+        loadTopicsList();
         return v;
     }
 
-    public void add(Tweet tweet) {
-        tweetsArrayAdapter.add(tweet);
+    public void add(Post post) {
+        topicsArrayAdapter.add(post);
     }
 
-    public void add(Integer position, Tweet tweet) {
-        tweets.add(position, tweet);
-        tweetsArrayAdapter.notifyDataSetChanged();
+    public void add(Integer position, Post post) {
+        posts.add(position, post);
+        topicsArrayAdapter.notifyDataSetChanged();
     }
 
-    abstract void loadTweetsList();
+    abstract void loadTopicsList();
 }

@@ -20,6 +20,7 @@ import com.yahoo.apps.thirty.R;
 public class StatusDialog extends DialogFragment {
     private EditText etStatus;
     private TextView tvCharsLeft;
+    private String targetId;
 
     public StatusDialog() {
     }
@@ -35,6 +36,8 @@ public class StatusDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_post, container);
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+        targetId = getArguments().getString("targetId");
+
         etStatus = (EditText) view.findViewById(R.id.etStatus);
         tvCharsLeft = (TextView) view.findViewById(R.id.tvCharsLeft);
         Button btnPost = (Button) view.findViewById(R.id.btnPost);
@@ -43,7 +46,8 @@ public class StatusDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 StatusDialogListener listener = (StatusDialogListener) getActivity();
-                listener.onFinishStatusDialog(etStatus.getText().toString());
+
+                listener.onFinishStatusDialog(targetId, etStatus.getText().toString());
                 dismiss();
             }
         });
@@ -65,6 +69,6 @@ public class StatusDialog extends DialogFragment {
     }
 
     public interface StatusDialogListener {
-        void onFinishStatusDialog(String status);
+        void onFinishStatusDialog(String targetId,String status);
     }
 }

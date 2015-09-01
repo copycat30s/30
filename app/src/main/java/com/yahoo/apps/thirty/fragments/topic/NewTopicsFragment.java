@@ -1,0 +1,28 @@
+package com.yahoo.apps.thirty.fragments.topic;
+
+import android.util.Log;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.yahoo.apps.thirty.models.Post;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class NewTopicsFragment extends TopicsListFragment {
+    @Override
+    void loadTopicsList() {
+        tumblrClient.getNewTopics(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
+                topicsArrayAdapter.addAll(Post.fromJSONArray(jsonArray));
+                swipeContainer.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                Log.i("ERROR", response.toString());
+            }
+        });
+    }
+}

@@ -17,7 +17,7 @@
         android:maxSdkVersion="18" />
 
     <application
-        android:name="com.yahoo.apps.thirty.backbone.TumblrApplication"
+        android:name=".backbone.TumblrApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -30,7 +30,7 @@
             android:value="1" />
 
         <activity
-            android:name="com.yahoo.apps.thirty.activities.LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme" >
             <intent-filter>
@@ -50,12 +50,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.yahoo.apps.thirty.activities.TimelineActivity"
-            android:label="@string/title_activity_timeline" >
+            android:name=".activities.TopicsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_topics" >
         </activity>
         <activity
-            android:name="com.yahoo.apps.thirty.activities.ProfileActivity"
-            android:label="" >
+            android:name=".activities.PostsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_posts" >
         </activity>
     </application>
 
