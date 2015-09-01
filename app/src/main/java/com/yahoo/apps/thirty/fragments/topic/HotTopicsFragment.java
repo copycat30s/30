@@ -15,7 +15,8 @@ public class HotTopicsFragment extends TopicsListFragment {
         tumblrClient.getHotTopics(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
-                topicsArrayAdapter.addAll(Post.fromJSONArray(jsonArray));
+                posts.addAll(Post.fromJSONArray(jsonArray));
+                topicsArrayAdapter.notifyDataSetChanged();
                 swipeContainer.setRefreshing(false);
             }
 

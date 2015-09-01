@@ -1,17 +1,15 @@
 package com.yahoo.apps.thirty.fragments.topic;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.yahoo.apps.thirty.R;
-import com.yahoo.apps.thirty.activities.PostsActivity;
 import com.yahoo.apps.thirty.adapters.TopicsArrayAdapter;
 import com.yahoo.apps.thirty.backbone.TumblrApplication;
 import com.yahoo.apps.thirty.backbone.TumblrClient;
@@ -30,7 +28,7 @@ public abstract class TopicsListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         posts = new ArrayList<>();
-        topicsArrayAdapter = new TopicsArrayAdapter(getActivity(), posts);
+        topicsArrayAdapter = new TopicsArrayAdapter(posts);
         tumblrClient = TumblrApplication.getTumblrClient();
     }
 
@@ -38,8 +36,9 @@ public abstract class TopicsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_posts_list, container, false);
 
-        ListView lvPosts = (ListView) v.findViewById(R.id.lvPosts);
-        lvPosts.setAdapter(topicsArrayAdapter);
+        RecyclerView rvPosts = (RecyclerView) v.findViewById(R.id.rvPosts);
+        rvPosts.setLayoutManager(new LinearLayoutManager(rvPosts.getContext()));
+        rvPosts.setAdapter(topicsArrayAdapter);
         // setup swipe container
         swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -62,28 +61,18 @@ public abstract class TopicsListFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        lvPosts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(view.getContext(), PostsActivity.class);
-                String topicId = posts.get(position).getUid();
-                i.putExtra("topicId", topicId);
-                startActivity(i);
-            }
-        });
-
         loadTopicsList();
         return v;
     }
 
-    public void add(Post post) {
-        topicsArrayAdapter.add(post);
-    }
-
-    public void add(Integer position, Post post) {
-        posts.add(position, post);
-        topicsArrayAdapter.notifyDataSetChanged();
-    }
+//    public void add(Post post) {
+//        topicsArrayAdapter.add(post);
+//    }
+//
+//    public void add(Integer position, Post post) {
+//        posts.add(position, post);
+//        topicsArrayAdapter.notifyDataSetChanged();
+//    }
 
     abstract void loadTopicsList();
 }

@@ -1,6 +1,6 @@
 package com.yahoo.apps.thirty.activities;
 
-import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -9,19 +9,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.yahoo.apps.thirty.R;
 import com.yahoo.apps.thirty.backbone.TumblrApplication;
 import com.yahoo.apps.thirty.backbone.TumblrClient;
 import com.yahoo.apps.thirty.fragments.post.HotPostsFragment;
 import com.yahoo.apps.thirty.fragments.post.NewPostsFragment;
 
-import org.apache.http.Header;
-import org.json.JSONObject;
-
-public class PostsActivity extends ActionBarActivity implements StatusDialog.StatusDialogListener {
+public class PostsActivity extends ActionBarActivity {
     private HotPostsFragment fHotPosts;
     private NewPostsFragment fNewPosts;
     private TumblrClient tumblrClient;
@@ -31,36 +28,18 @@ public class PostsActivity extends ActionBarActivity implements StatusDialog.Sta
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posts);
+        getSupportActionBar().hide();
         tumblrClient = TumblrApplication.getTumblrClient();
 
         if (savedInstanceState == null) {
             ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-            viewPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
+            viewPager.setAdapter(new PostsPagerAdapter(getSupportFragmentManager()));
             PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
             tabStrip.setViewPager(viewPager);
 
             topicId = getIntent().getStringExtra("topicId");
             Log.i("ERROR", topicId);
         }
-    }
-
-    public void postStatus(String targetId, String content) {
-        tumblrClient.postStatus(content, targetId, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
-                Log.i("ERROR", json.toString());
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                Log.i("ERROR", response.toString());
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
-                Log.i("ERROR", response);
-            }
-        });
     }
 
     @Override
@@ -79,7 +58,9 @@ public class PostsActivity extends ActionBarActivity implements StatusDialog.Sta
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_post) {
-            showPostDialog(topicId);
+            Intent i = new Intent(PostsActivity.this, ComposeActivity.class);
+            i.putExtra("targetId", topicId);
+            startActivity(i);
             return true;
 //        } else if (id == R.id.action_profile) {
 //            Intent i = new Intent(this, ProfileActivity.class);
@@ -91,28 +72,20 @@ public class PostsActivity extends ActionBarActivity implements StatusDialog.Sta
         return super.onOptionsItemSelected(item);
     }
 
-    public void showPostDialog(String targetId) {
-        FragmentManager fm = getFragmentManager();
-        StatusDialog filterDialog = StatusDialog.newInstance();
-        Bundle bundle = new Bundle();
-        bundle.putString("targetId", targetId);
-        filterDialog.setArguments(bundle);
-        filterDialog.show(fm, "fragment_filter");
-    }
-
-    @Override
-    public void onFinishStatusDialog(String targetId, String status) {
-        postStatus(targetId, status);
+    public void showCompose(View view) {
+        Intent i = new Intent(PostsActivity.this, ComposeActivity.class);
+        i.putExtra("targetId", topicId);
+        startActivity(i);
     }
 
     public String getTopicId() {
         return topicId;
     }
 
-    public class TweetsPagerAdapter extends FragmentPagerAdapter {
-        private String tabItems[] = {"Hot", "New"};
+    public class PostsPagerAdapter extends FragmentPagerAdapter {
+        private String tabItems[] = {"Hot Posts", "New Posts"};
 
-        public TweetsPagerAdapter(android.support.v4.app.FragmentManager fm) {
+        public PostsPagerAdapter(android.support.v4.app.FragmentManager fm) {
             super(fm);
 
             fHotPosts = new HotPostsFragment();

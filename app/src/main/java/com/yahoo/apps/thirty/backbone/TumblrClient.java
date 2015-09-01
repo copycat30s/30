@@ -22,25 +22,13 @@ import org.scribe.builder.api.TumblrApi;
 
 import java.io.UnsupportedEncodingException;
 
-/*
- * 
- * This is the object responsible for communicating with a REST API. 
- * Specify the constants below to change the API being communicated with.
- * See a full list of supported API classes: 
- *   https://github.com/fernandezpablo85/scribe-java/tree/master/src/main/java/org/scribe/builder/api
- * Key and Secret are provided by the developer site for the given API i.e dev.twitter.com
- * Add methods for each relevant endpoint in the API.
- * 
- * NOTE: You may want to rename this object based on the service i.e TumblrClient or FlickrClient
- * 
- */
 public class TumblrClient extends OAuthBaseClient {
 	public static final Class<? extends Api> REST_API_CLASS = TumblrApi.class;
 	public static final String REST_URL = "https://api.tumblr.com/v2";
 	public static final String REST_CONSUMER_KEY = "P3H5ykAipCbRs6Dhxyo38ECo0ZlpC8mgUreeWIUU7vkKY1q1i0";
 	public static final String REST_CONSUMER_SECRET = "wtrgiIR2Y2N4hwM0WO2hn9jlxoa0Cyhf2OhRQO6eRVi8I49IEi";
 	public static final String REST_CALLBACK_URL = "oauth://tumblrclient";
-	public static final String THIRTY_WEB_API_URL = "http://10.101.136.164:8080";
+	public static final String THIRTY_WEB_API_URL = "http://172.20.10.3:8080";
 
 	public TumblrClient(Context context) {
 		super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
@@ -107,25 +95,25 @@ public class TumblrClient extends OAuthBaseClient {
 
     // Get Hot Posts in a Topic
     public void getHotPosts(String topicId, JsonHttpResponseHandler handler) {
-        String url = "http://10.101.136.164:8080/30/posts?sort_by=-heat&filter=%7B%22topic%22:%22" + topicId + "%22%7D";
+        String url = THIRTY_WEB_API_URL + "/30/posts?sort_by=-heat&filter=%7B%22topic%22:%22" + topicId + "%22%7D";
         getPostsFromThirtyAPI(url, handler);
     }
 
     // Get New Posts in a Topic
     public void getNewPosts(String topicId, JsonHttpResponseHandler handler) {
-        String url = "http://10.101.136.164:8080/30/posts?sort_by=-timestamp&filter=%7B%22topic%22:%22" + topicId + "%22%7D";
+        String url = THIRTY_WEB_API_URL + "/30/posts?sort_by=-timestamp&filter=%7B%22topic%22:%22" + topicId + "%22%7D";
         getPostsFromThirtyAPI(url, handler);
     }
 
 	// Get Hot Topics
 	public void getHotTopics(JsonHttpResponseHandler handler) {
-        String url = "http://10.101.136.164:8080/30/topics?sort_by=-heat";
+        String url = THIRTY_WEB_API_URL + "/30/topics?sort_by=-heat";
         getPostsFromThirtyAPI(url, handler);
 	}
 
     // Get New Topics
     public void getNewTopics(JsonHttpResponseHandler handler) {
-        String url = "http://10.101.136.164:8080/30/topics?sort_by=-timestamp";
+        String url = THIRTY_WEB_API_URL + "/30/topics?sort_by=-timestamp";
         getPostsFromThirtyAPI(url, handler);
     }
 
@@ -171,13 +159,4 @@ public class TumblrClient extends OAuthBaseClient {
 			}
 		});
 	}
-
-	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
-	 * 	  i.e getApiUrl("statuses/home_timeline.json");
-	 * 2. Define the parameters to pass to the request (query or body)
-	 *    i.e RequestParams params = new RequestParams("foo", "bar");
-	 * 3. Define the request method and make a call to the tumblrClient
-	 *    i.e tumblrClient.get(apiUrl, params, handler);
-	 *    i.e tumblrClient.post(apiUrl, params, handler);
-	 */
 }

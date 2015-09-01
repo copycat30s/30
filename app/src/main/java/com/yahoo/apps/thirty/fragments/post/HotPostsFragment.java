@@ -9,17 +9,14 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 public class HotPostsFragment extends PostsListFragment {
     @Override
     void loadTopicsList() {
         tumblrClient.getHotPosts(topicId, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
-                ArrayList<Post> posts = Post.fromJSONArray(jsonArray);
-                Log.i("ERROR", posts.toString());
-                topicsArrayAdapter.addAll(Post.fromJSONArray(jsonArray));
+                posts.addAll(Post.fromJSONArray(jsonArray));
+                postsArrayAdapter.notifyDataSetChanged();
                 swipeContainer.setRefreshing(false);
             }
 

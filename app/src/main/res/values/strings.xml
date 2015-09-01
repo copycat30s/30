@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Twitter Client</string>
-    <string name="login_label">Connect to Twitter</string>
+    <string name="app_name">Thirty</string>
+    <string name="login_label">Connect to Tumblr</string>
     <string name="title_activity_topics">Topics</string>
     <string name="title_activity_posts">Posts</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_post">post</string>
     <string name="action_profile">profile</string>
+    <string name="title_activity_compose">New Post</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

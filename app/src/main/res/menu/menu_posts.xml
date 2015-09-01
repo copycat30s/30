@@ -4,7 +4,7 @@
     tools:context="com.yahoo.apps.thirty.activities.PostsActivity">
     <item android:id="@+id/action_post"
         android:title="@string/action_post"
-        android:icon="@drawable/ic_compose"
+        android:icon="@drawable/pen"
         android:orderInCategory="2"
         app:showAsAction="ifRoom" />
 </menu>

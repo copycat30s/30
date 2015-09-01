@@ -1,6 +1,6 @@
 package com.yahoo.apps.thirty.activities;
 
-import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -21,7 +22,7 @@ import com.yahoo.apps.thirty.fragments.topic.NewTopicsFragment;
 import org.apache.http.Header;
 import org.json.JSONObject;
 
-public class TopicsActivity extends ActionBarActivity implements StatusDialog.StatusDialogListener {
+public class TopicsActivity extends ActionBarActivity {
     private HotTopicsFragment fHotTopics;
     private NewTopicsFragment fNewTopics;
     private TumblrClient tumblrClient;
@@ -30,11 +31,12 @@ public class TopicsActivity extends ActionBarActivity implements StatusDialog.St
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
+        getSupportActionBar().hide();
         tumblrClient = TumblrApplication.getTumblrClient();
 
         if (savedInstanceState == null) {
             ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-            viewPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
+            viewPager.setAdapter(new TopicsPagerAdapter(getSupportFragmentManager()));
             PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
             tabStrip.setViewPager(viewPager);
         }
@@ -75,7 +77,9 @@ public class TopicsActivity extends ActionBarActivity implements StatusDialog.St
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_post) {
-            showPostDialog();
+            Intent i = new Intent(TopicsActivity.this, ComposeActivity.class);
+            i.putExtra("targetId", "");
+            startActivity(i);
             return true;
 //        } else if (id == R.id.action_profile) {
 //            Intent i = new Intent(this, ProfileActivity.class);
@@ -87,24 +91,16 @@ public class TopicsActivity extends ActionBarActivity implements StatusDialog.St
         return super.onOptionsItemSelected(item);
     }
 
-    private void showPostDialog() {
-        FragmentManager fm = getFragmentManager();
-        StatusDialog filterDialog = StatusDialog.newInstance();
-        Bundle bundle = new Bundle();
-        bundle.putString("targetId", "");
-        filterDialog.setArguments(bundle);
-        filterDialog.show(fm, "fragment_filter");
+    public void showCompose(View view) {
+        Intent i = new Intent(TopicsActivity.this, ComposeActivity.class);
+        i.putExtra("targetId", "");
+        startActivity(i);
     }
 
-    @Override
-    public void onFinishStatusDialog(String targetId, String status) {
-        postStatus(targetId, status);
-    }
+    public class TopicsPagerAdapter extends FragmentPagerAdapter {
+        private String tabItems[] = {"Hot Topics", "New Topics"};
 
-    public class TweetsPagerAdapter extends FragmentPagerAdapter {
-        private String tabItems[] = {"Hot", "New"};
-
-        public TweetsPagerAdapter(android.support.v4.app.FragmentManager fm) {
+        public TopicsPagerAdapter(android.support.v4.app.FragmentManager fm) {
             super(fm);
 
             fHotTopics = new HotTopicsFragment();
