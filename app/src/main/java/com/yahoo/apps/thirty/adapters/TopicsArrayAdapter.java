@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.curioustechizen.ago.RelativeTimeTextView;
-import com.squareup.picasso.Picasso;
+import com.koushikdutta.ion.Ion;
 import com.yahoo.apps.thirty.R;
 import com.yahoo.apps.thirty.activities.PostsActivity;
 import com.yahoo.apps.thirty.models.Post;
@@ -91,10 +91,11 @@ public class TopicsArrayAdapter extends RecyclerView.Adapter<TopicsArrayAdapter.
         });
 
         viewHolder.ivImage.setImageResource(0);
-        Picasso.with(viewHolder.view.getContext())
-                .load("https://fbcdn-sphotos-f-a.akamaihd.net/hphotos-ak-xpf1/t31.0-8/10382130_10202099613397175_6922996502139304660_o.jpg")
+        Ion.with(viewHolder.view.getContext())
+                .load("http://31.media.tumblr.com/6611380173375ca96b69ee0b1bf167d3/tumblr_nu0umqh4Tx1ttqydoo1_250.gif")
+                .withBitmap()
                 .placeholder(R.drawable.placeholder_img)
-                .into(viewHolder.ivImage);
+                .intoImageView(viewHolder.ivImage);
     }
 
     // Return the total count of items

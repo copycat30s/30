@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">Thirty</string>
-    <string name="login_label">Connect to Tumblr</string>
+    <string name="app_name_dot">Thirty.</string>
+    <string name="login_label">Log In</string>
     <string name="title_activity_topics">Topics</string>
     <string name="title_activity_posts">Posts</string>
 
@@ -10,7 +11,5 @@
     <string name="action_post">post</string>
     <string name="action_profile">profile</string>
     <string name="title_activity_compose">New Post</string>
-
-    <string name="hello_world">Hello world!</string>
 
 </resources>

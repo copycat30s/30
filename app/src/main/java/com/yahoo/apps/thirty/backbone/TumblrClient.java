@@ -28,7 +28,7 @@ public class TumblrClient extends OAuthBaseClient {
 	public static final String REST_CONSUMER_KEY = "P3H5ykAipCbRs6Dhxyo38ECo0ZlpC8mgUreeWIUU7vkKY1q1i0";
 	public static final String REST_CONSUMER_SECRET = "wtrgiIR2Y2N4hwM0WO2hn9jlxoa0Cyhf2OhRQO6eRVi8I49IEi";
 	public static final String REST_CALLBACK_URL = "oauth://tumblrclient";
-	public static final String THIRTY_WEB_API_URL = "http://172.20.10.3:8080";
+	public static final String THIRTY_WEB_API_URL = "http://10.101.136.164:8080";
 
 	public TumblrClient(Context context) {
 		super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
