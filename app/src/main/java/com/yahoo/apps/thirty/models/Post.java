@@ -10,21 +10,21 @@ import java.util.ArrayList;
  * Created by jackylee on 8/10/15.
  */
 public class Post {
-    private String body;
     private String uid;
-    private String title;
+    private String title = "";
     private String author;
+    private String image_url;
     private long timestamp;
 
     public Post(JSONObject json) {
         super();
 
         try {
-            this.body = json.getString("body");
             this.uid = json.getString("id");
-            this.title = json.getString("title");
+            this.title = json.getString("caption");
             this.author = json.getString("post_author");
             this.timestamp = json.getLong("timestamp");
+            this.image_url = json.getJSONArray("photos").getJSONObject(0).getJSONObject("original_size").getString("url");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -46,10 +46,6 @@ public class Post {
         return posts;
     }
 
-    public String getBody() {
-        return body;
-    }
-
     public String getUid() {
         return uid;
     }
@@ -65,4 +61,6 @@ public class Post {
     public long getTimestamp() {
         return timestamp;
     }
+
+    public String getImage_url() { return image_url; }
 }

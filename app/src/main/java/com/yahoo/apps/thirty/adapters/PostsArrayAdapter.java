@@ -74,8 +74,7 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
         final Post post = posts.get(position);
 
         // Set item views based on the data model
-        String body = post.getBody().replace("<p>", "").replace("</p>", "");
-        viewHolder.tvTitle.setText(body);
+        viewHolder.tvTitle.setText(post.getTitle());
         viewHolder.tvAuthor.setText(post.getAuthor());
 //        viewHolder.tvBody.setText(Html.fromHtml(post.getBody()));
         viewHolder.tvRelativeTime.setReferenceTime(post.getTimestamp() * 1000);
@@ -90,7 +89,7 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
 
         viewHolder.ivImage.setImageResource(0);
         Ion.with(viewHolder.view.getContext())
-                .load("http://31.media.tumblr.com/6611380173375ca96b69ee0b1bf167d3/tumblr_nu0umqh4Tx1ttqydoo1_250.gif")
+                .load(post.getImage_url())
                 .withBitmap()
                 .placeholder(R.drawable.placeholder_img)
                 .intoImageView(viewHolder.ivImage);
