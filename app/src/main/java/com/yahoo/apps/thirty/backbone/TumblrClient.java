@@ -86,6 +86,7 @@ public class TumblrClient extends OAuthBaseClient {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    handler.onSuccess(statusCode, headers, new JSONArray());
                 }
             }
 

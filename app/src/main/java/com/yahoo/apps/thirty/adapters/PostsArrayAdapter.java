@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.curioustechizen.ago.RelativeTimeTextView;
@@ -30,6 +31,8 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
         public ImageView ivImage;
 //        public TextView tvBody;
         public RelativeTimeTextView tvRelativeTime;
+        public LinearLayout llActions;
+        public ImageView ivReply;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -44,6 +47,8 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
             ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
 //            tvBody = (TextView) itemView.findViewById(R.id.tvBody);
             tvRelativeTime = (RelativeTimeTextView) itemView.findViewById(R.id.tvRelativeTime);
+            llActions = (LinearLayout) itemView.findViewById(R.id.llActions);
+            ivReply = (ImageView) itemView.findViewById(R.id.ivReply);
         }
     }
 
@@ -69,18 +74,26 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
 
     // Involves populating data into the item through holder
     @Override
-    public void onBindViewHolder(PostsArrayAdapter.ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(final PostsArrayAdapter.ViewHolder viewHolder, final int position) {
         // Get the data model based on position
         final Post post = posts.get(position);
 
         // Set item views based on the data model
-        viewHolder.tvTitle.setText(post.getTitle());
+        viewHolder.tvTitle.setText(post.getTitle().replace("<p>","").replace("</p>", ""));
         viewHolder.tvAuthor.setText(post.getAuthor());
 //        viewHolder.tvBody.setText(Html.fromHtml(post.getBody()));
         viewHolder.tvRelativeTime.setReferenceTime(post.getTimestamp() * 1000);
         viewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                viewHolder.llActions.setVisibility(View.VISIBLE);
+            }
+        });
+
+        viewHolder.ivReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewHolder.llActions.setVisibility(View.GONE);
                 Intent i = new Intent(view.getContext(), ComposeActivity.class);
                 i.putExtra("targetId", post.getUid());
                 view.getContext().startActivity(i);

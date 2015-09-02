@@ -12,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -73,29 +72,6 @@ public class TopicsActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_topics, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_post) {
-            Intent i = new Intent(TopicsActivity.this, ComposeActivity.class);
-            i.putExtra("targetId", "");
-            startActivity(i);
-            return true;
-//        } else if (id == R.id.action_profile) {
-//            Intent i = new Intent(this, ProfileActivity.class);
-//            i.putExtra("user", user);
-//            startActivity(i);
-//            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void showCompose(View view) {
