@@ -20,7 +20,10 @@ import org.json.JSONObject;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TumblrApi;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class TumblrClient extends OAuthBaseClient {
 	public static final Class<? extends Api> REST_API_CLASS = TumblrApi.class;
@@ -115,6 +118,30 @@ public class TumblrClient extends OAuthBaseClient {
     public void getNewTopics(JsonHttpResponseHandler handler) {
         String url = THIRTY_WEB_API_URL + "/30/topics?sort_by=-timestamp";
         getPostsFromThirtyAPI(url, handler);
+    }
+
+    public void postPhoto (String blog, String caption, String file_path, AsyncHttpResponseHandler handler)
+    {
+        String api_url = getApiUrl("blog/thirtyapp.tumblr.com/post?type=photo");
+
+        RequestParams params = new RequestParams();
+
+        params.put("type", "photo");
+        try {
+            File f = new File(file_path);
+            params.put("data", f);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (caption != null && caption.length() > 0) {
+            api_url += "&caption=" + URLEncoder.encode(caption);
+            params.put("caption", caption);
+        }
+
+        Log.i("URL", api_url);
+
+        getClient().post(api_url, params, handler);
     }
 
 	// Post Status Update

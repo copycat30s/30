@@ -11,5 +11,8 @@
     <string name="action_post">post</string>
     <string name="action_profile">profile</string>
     <string name="title_activity_compose">New Post</string>
+    <string name="title_activity_posting">PostingActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>
