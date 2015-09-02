@@ -10,7 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +18,6 @@ import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.yahoo.apps.thirty.R;
-import com.yahoo.apps.thirty.backbone.TumblrApplication;
-import com.yahoo.apps.thirty.backbone.TumblrClient;
 import com.yahoo.apps.thirty.fragments.post.HotPostsFragment;
 import com.yahoo.apps.thirty.fragments.post.NewPostsFragment;
 
@@ -28,15 +26,13 @@ import java.io.File;
 public class PostsActivity extends ActionBarActivity {
     private HotPostsFragment fHotPosts;
     private NewPostsFragment fNewPosts;
-    private TumblrClient tumblrClient;
     private String topicId;
+    private String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posts);
-        getSupportActionBar().hide();
-        tumblrClient = TumblrApplication.getTumblrClient();
 
         if (savedInstanceState == null) {
             ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -45,7 +41,8 @@ public class PostsActivity extends ActionBarActivity {
             tabStrip.setViewPager(viewPager);
 
             topicId = getIntent().getStringExtra("topicId");
-            Log.i("ERROR", topicId);
+            title = getIntent().getStringExtra("title");
+            setTitle(Html.fromHtml(title).toString());
         }
     }
 

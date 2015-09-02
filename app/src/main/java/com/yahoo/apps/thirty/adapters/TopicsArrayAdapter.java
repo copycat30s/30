@@ -74,7 +74,7 @@ public class TopicsArrayAdapter extends RecyclerView.Adapter<TopicsArrayAdapter.
         Post post = posts.get(position);
 
         // Set item views based on the data model
-        viewHolder.tvAuthor.setText(post.getTitle().replace("<p>","").replace("</p>",""));
+        viewHolder.tvAuthor.setText(post.getTitle().replace("<p>","").replace("</p>", ""));
 //        viewHolder.tvBody.setText(Html.fromHtml(post.getBody()));
         viewHolder.tvRelativeTime.setReferenceTime(post.getTimestamp() * 1000);
 
@@ -82,8 +82,9 @@ public class TopicsArrayAdapter extends RecyclerView.Adapter<TopicsArrayAdapter.
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(view.getContext(), PostsActivity.class);
-                String topicId = posts.get(position).getUid();
-                i.putExtra("topicId", topicId);
+                Post post = posts.get(position);
+                i.putExtra("topicId", post.getUid());
+                i.putExtra("title", post.getTitle());
                 view.getContext().startActivity(i);
             }
         });
