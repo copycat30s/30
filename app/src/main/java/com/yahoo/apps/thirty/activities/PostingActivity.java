@@ -43,10 +43,11 @@ import java.util.List;
 public class PostingActivity extends ActionBarActivity {
 
     String default_blog_name;
-    String video_path;
+    String video_path, gif_path;
     String parent_id;
 
-    private static double compression = 0.25;
+    private static double compression = 0.1;
+    TaskSaveGIF gif_maker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -60,14 +61,22 @@ public class PostingActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-
         default_blog_name = getIntent().getStringExtra("blog_name");
         parent_id = getIntent().getStringExtra("targetId");
         video_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.mp4";
+        gif_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.gif";
 
-        TaskSaveGIF gif_maker = new TaskSaveGIF();
+        convertVideoToGIF();
+    }
 
-        gif_maker.execute(video_path);
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (gif_maker.getStatus() != TaskSaveGIF.Status.FINISHED) {
+            Log.i("GIF TASK", "stop converting");
+            gif_maker.cancel(true);
+        }
     }
 
     @Override
@@ -77,18 +86,17 @@ public class PostingActivity extends ActionBarActivity {
         return true;
     }
 
-    private void uploadVideo ()
+    private void convertVideoToGIF()
     {
-        TaskSaveGIF gif_maker = new TaskSaveGIF();
-
+        gif_maker = new TaskSaveGIF();
         gif_maker.execute(video_path);
     }
 
     public void onPost (View view)
     {
         view.setEnabled(false);
-        String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-        File outFile = new File(extStorageDirectory, "test.gif");
+
+        File outFile = new File(gif_path);
 
         final ProgressBar pb = (ProgressBar) PostingActivity.this.findViewById(R.id.progressBar);
         Log.i("File length", String.valueOf(outFile.length()));
@@ -163,21 +171,13 @@ public class PostingActivity extends ActionBarActivity {
         List<Bitmap> bitmaps = new ArrayList<>();
 
         @Override
-        protected File doInBackground(String... params) {
-            MediaMetadataRetriever ret = new MediaMetadataRetriever();
-
-            FrameGrabber fg = new FrameGrabber();
-
-            ret.setDataSource(params[0]);
-            fg.setDataSource(params[0]);
-            fg.init();
-
-            String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-            File outFile = new File(extStorageDirectory, "test.gif");
+        protected File doInBackground (String... params)
+        {
+            File outFile = new File(gif_path);
 
             try {
                 BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outFile));
-                bos.write(genGIF(fg, ret));
+                bos.write(genGIF(params[0]));
                 bos.flush();
                 bos.close();
             } catch (IOException e) {
@@ -196,14 +196,13 @@ public class PostingActivity extends ActionBarActivity {
         @Override
         protected void onProgressUpdate (Integer... values)
         {
-            ProgressBar pb = (ProgressBar) PostingActivity.this.findViewById(R.id.progressBar);
+            Log.i("GIF Task", values[0] + " / " + values[1]);
 
-            Log.i("====progress====", values[0] + " / " + values[1]);
+            ProgressBar pb = (ProgressBar) PostingActivity.this.findViewById(R.id.progressBar);
             pb.setMax(values[1]);
             pb.setProgress(values[0]);
 
             ImageView image_view = (ImageView) PostingActivity.this.findViewById(R.id.imageView);
-
             if (bitmaps.size() > values[0]) {
                 image_view.setImageBitmap(bitmaps.get(values[0]));
             }
@@ -212,60 +211,67 @@ public class PostingActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(File outFile) {
             ImageView image_view = (ImageView) PostingActivity.this.findViewById(R.id.imageView);
-
             image_view.setImageResource(0);
-            Ion.with(PostingActivity.this).load(outFile).withBitmap().intoImageView(image_view);
+            Ion.with(PostingActivity.this).load(outFile).noCache().intoImageView(image_view);
 
             ProgressBar pb = (ProgressBar) PostingActivity.this.findViewById(R.id.progressBar);
-
             pb.setVisibility(View.INVISIBLE);
 
             Button post_btn = (Button) PostingActivity.this.findViewById(R.id.btPost);
-
             post_btn.setVisibility(View.VISIBLE);
 
             TextView caption_text = (TextView) PostingActivity.this.findViewById(R.id.tvCaption);
-
             caption_text.setVisibility(View.VISIBLE);
         }
 
-        private byte[] genGIF (FrameGrabber fg, MediaMetadataRetriever ret)
+        private byte[] genGIF (String file_name)
         {
-            String duration = ret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            long maxDur = Math.min((long)(1000 * Double.parseDouble(duration)), 30000000L);
-            int frames = (int)maxDur / 200000; // 5fps
+            int max_duration = getMaxDuration(file_name);
+            int frames = max_duration / 200; // 5fps
+
+            FrameGrabber frame_grabber = new FrameGrabber();
+            frame_grabber.setDataSource(file_name);
+            frame_grabber.init();
+
+            AnimatedGifEncoder gif_encoder = new AnimatedGifEncoder();
+            gif_encoder.setDelay(max_duration / frames);
+            gif_encoder.setRepeat(0);
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            gif_encoder.start(bos);
 
-            AnimatedGifEncoder animatedGifEncoder = new AnimatedGifEncoder();
-            animatedGifEncoder.setDelay(200);
-            animatedGifEncoder.setRepeat(0);
+            Bitmap bitmap, scaled_bitmap;
+            for (int i = 0; i <= frames && !isCancelled(); i += 1) {
+                long frame_time = 1000L * max_duration * i / frames;
 
-            Bitmap bmFrame, scaleBmFrame;
-            animatedGifEncoder.start(bos);
-            for (int i = 0; i < frames; i += 1) {
-                long frameTime = maxDur * i/frames;
-                bmFrame = fg.getFrameAtTime(frameTime);
-                if (bmFrame == null) {
+                bitmap = frame_grabber.getFrameAtTime(frame_time);
+                if (bitmap == null) {
                     break;
                 }
-                scaleBmFrame = Bitmap.createScaledBitmap(bmFrame, (int) (bmFrame.getWidth() * compression), (int) (bmFrame.getHeight() * compression), true);
-                animatedGifEncoder.addFrame(scaleBmFrame);
-                bitmaps.add(scaleBmFrame);
+
+                scaled_bitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * compression), (int) (bitmap.getHeight() * compression), true);
+                gif_encoder.addFrame(scaled_bitmap);
+                bitmaps.add(scaled_bitmap);
+
                 publishProgress(i, frames);
             }
 
-            //last from at end
-            bmFrame = fg.getFrameAtTime(maxDur);
-            if (bmFrame != null) {
-                scaleBmFrame = Bitmap.createScaledBitmap(bmFrame, (int) (bmFrame.getWidth() * compression), (int) (bmFrame.getHeight() * compression), true);
-                bitmaps.add(scaleBmFrame);
-                animatedGifEncoder.addFrame(scaleBmFrame);
-            }
-            publishProgress(frames, frames);
+            gif_encoder.finish();
+            frame_grabber.release();
 
-            animatedGifEncoder.finish();
             return bos.toByteArray();
+        }
+
+        private int getMaxDuration (String file_name)
+        {
+            MediaMetadataRetriever ret = new MediaMetadataRetriever();
+            ret.setDataSource(file_name);
+
+            String duration = ret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+
+            ret.release();
+
+            return Math.min((int) Double.parseDouble(duration), 30000);
         }
 
     }
