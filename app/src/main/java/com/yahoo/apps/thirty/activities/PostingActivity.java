@@ -46,11 +46,20 @@ public class PostingActivity extends ActionBarActivity {
     String video_path;
     String parent_id;
 
+    private static double compression = 0.25;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posting);
+
+        try {
+            getSupportActionBar().hide();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
 
         default_blog_name = getIntent().getStringExtra("blog_name");
         parent_id = getIntent().getStringExtra("targetId");
@@ -77,6 +86,7 @@ public class PostingActivity extends ActionBarActivity {
 
     public void onPost (View view)
     {
+        view.setEnabled(false);
         String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
         File outFile = new File(extStorageDirectory, "test.gif");
 
@@ -239,7 +249,7 @@ public class PostingActivity extends ActionBarActivity {
                 if (bmFrame == null) {
                     break;
                 }
-                scaleBmFrame = Bitmap.createScaledBitmap(bmFrame, (int) (bmFrame.getWidth() * 0.1), (int) (bmFrame.getHeight() * 0.1), true);
+                scaleBmFrame = Bitmap.createScaledBitmap(bmFrame, (int) (bmFrame.getWidth() * compression), (int) (bmFrame.getHeight() * compression), true);
                 animatedGifEncoder.addFrame(scaleBmFrame);
                 bitmaps.add(scaleBmFrame);
                 publishProgress(i, frames);
@@ -248,7 +258,7 @@ public class PostingActivity extends ActionBarActivity {
             //last from at end
             bmFrame = fg.getFrameAtTime(maxDur);
             if (bmFrame != null) {
-                scaleBmFrame = Bitmap.createScaledBitmap(bmFrame, (int) (bmFrame.getWidth() * 0.1), (int) (bmFrame.getHeight() * 0.1), true);
+                scaleBmFrame = Bitmap.createScaledBitmap(bmFrame, (int) (bmFrame.getWidth() * compression), (int) (bmFrame.getHeight() * compression), true);
                 bitmaps.add(scaleBmFrame);
                 animatedGifEncoder.addFrame(scaleBmFrame);
             }

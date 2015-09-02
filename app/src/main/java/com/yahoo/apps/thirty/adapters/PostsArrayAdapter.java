@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.curioustechizen.ago.RelativeTimeTextView;
@@ -30,7 +29,6 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
         public ImageView ivImage;
 //        public TextView tvBody;
         public RelativeTimeTextView tvRelativeTime;
-        public LinearLayout llActions;
         public ImageView ivReply;
 
         // We also create a constructor that accepts the entire item row
@@ -46,7 +44,6 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
             ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
 //            tvBody = (TextView) itemView.findViewById(R.id.tvBody);
             tvRelativeTime = (RelativeTimeTextView) itemView.findViewById(R.id.tvRelativeTime);
-            llActions = (LinearLayout) itemView.findViewById(R.id.llActions);
             ivReply = (ImageView) itemView.findViewById(R.id.ivReply);
         }
     }
@@ -85,14 +82,19 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
         viewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewHolder.llActions.setVisibility(View.VISIBLE);
+                ImageView ivReply = viewHolder.ivReply;
+                if (ivReply.getVisibility() == View.GONE) {
+                    viewHolder.ivReply.setVisibility(View.VISIBLE);
+                } else {
+                    viewHolder.ivReply.setVisibility(View.GONE);
+                }
             }
         });
 
         viewHolder.ivReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewHolder.llActions.setVisibility(View.GONE);
+                viewHolder.ivReply.setVisibility(View.GONE);
 
                 PostsActivity post_activity = (PostsActivity) view.getContext();
 
