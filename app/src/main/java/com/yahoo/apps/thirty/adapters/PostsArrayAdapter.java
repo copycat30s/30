@@ -2,6 +2,7 @@ package com.yahoo.apps.thirty.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,9 +74,8 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
     public void onBindViewHolder(final PostsArrayAdapter.ViewHolder viewHolder, final int position) {
         // Get the data model based on position
         final Post post = posts.get(position);
-
         // Set item views based on the data model
-        viewHolder.tvTitle.setText(post.getTitle().replace("<p>","").replace("</p>", ""));
+        viewHolder.tvTitle.setText(Html.fromHtml(post.getTitle().replace("<p>","").replace("</p>", "")));
         viewHolder.tvAuthor.setText(post.getAuthor());
 //        viewHolder.tvBody.setText(Html.fromHtml(post.getBody()));
         viewHolder.tvRelativeTime.setReferenceTime(post.getTimestamp() * 1000);

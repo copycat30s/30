@@ -76,7 +76,7 @@ public class TopicsArrayAdapter extends RecyclerView.Adapter<TopicsArrayAdapter.
 
         // Set item views based on the data model
         viewHolder.tvTitle.setText(Html.fromHtml("Originally created by <b>" + post.getAuthor() + "</b>"));
-        viewHolder.tvAuthor.setText(post.getTitle().replace("<p>","").replace("</p>", ""));
+        viewHolder.tvAuthor.setText(Html.fromHtml(post.getTitle().replace("<p>", "").replace("</p>", "")));
 //        viewHolder.tvBody.setText(Html.fromHtml(post.getBody()));
         viewHolder.tvRelativeTime.setReferenceTime(post.getTimestamp() * 1000);
 
