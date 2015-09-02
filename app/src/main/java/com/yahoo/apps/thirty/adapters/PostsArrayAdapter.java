@@ -1,7 +1,6 @@
 package com.yahoo.apps.thirty.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.koushikdutta.ion.Ion;
 import com.yahoo.apps.thirty.R;
-import com.yahoo.apps.thirty.activities.ComposeActivity;
+import com.yahoo.apps.thirty.activities.PostsActivity;
 import com.yahoo.apps.thirty.models.Post;
 
 import java.util.ArrayList;
@@ -94,9 +93,12 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
             @Override
             public void onClick(View view) {
                 viewHolder.llActions.setVisibility(View.GONE);
-                Intent i = new Intent(view.getContext(), ComposeActivity.class);
-                i.putExtra("targetId", post.getUid());
-                view.getContext().startActivity(i);
+
+                PostsActivity post_activity = (PostsActivity) view.getContext();
+
+                post_activity.setParentId(post.getUid());
+
+                post_activity.startRecordingVideo();
             }
         });
 
@@ -104,7 +106,7 @@ public class PostsArrayAdapter extends RecyclerView.Adapter<PostsArrayAdapter.Vi
         Ion.with(viewHolder.view.getContext())
                 .load(post.getImage_url())
                 .withBitmap()
-                .placeholder(R.drawable.placeholder_img)
+                .placeholder(R.drawable.placeholder)
                 .intoImageView(viewHolder.ivImage);
     }
 

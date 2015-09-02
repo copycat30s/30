@@ -93,7 +93,7 @@ public class TopicsArrayAdapter extends RecyclerView.Adapter<TopicsArrayAdapter.
         Ion.with(viewHolder.view.getContext())
                 .load(post.getImage_url())
                 .withBitmap()
-                .placeholder(R.drawable.placeholder_img)
+                .placeholder(R.drawable.placeholder)
                 .intoImageView(viewHolder.ivImage);
     }
 

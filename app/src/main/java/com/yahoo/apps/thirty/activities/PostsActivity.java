@@ -29,6 +29,12 @@ public class PostsActivity extends ActionBarActivity {
     private String topicId;
     private String title;
 
+    private String parentId = null;
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +147,12 @@ public class PostsActivity extends ActionBarActivity {
 
                 Intent intent = new Intent(this, PostingActivity.class);
                 intent.putExtra("blog_name", "holicy");
-                intent.putExtra("targetId", topicId);
+                if (parentId != null) {
+                    intent.putExtra("targetId", parentId);
+                    parentId = null;
+                } else {
+                    intent.putExtra("targetId", topicId);
+                }
                 startActivityForResult(intent, POSTING_CONFIRM);
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Video recording cancelled.",  Toast.LENGTH_LONG).show();

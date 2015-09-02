@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
-        android:src="@drawable/pen"
+        android:src="@drawable/ic_action_record"
         android:onClick="showCompose"
         app:layout_anchor="@id/rlPage"
         app:backgroundTint="#ff505050"
